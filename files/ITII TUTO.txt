@@ -1,0 +1,10 @@
+Labyrinthe + Menu
+
+make
+./Labyrinthe
+
+ou juste le labyrinthe seul :
+
+gcc labySeul.c fonctions.c -o Labyrinthe1 -lncurses
+
+
