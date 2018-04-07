@@ -36,33 +36,34 @@ int main (int argc, char **argv)
             {
                 for(nb_col=1;nb_col<=xmax;nb_col++)
                 {
-                   fscanf(fichier,"%c",&tab[nb_ligne][nb_col]);
-                    if(tab[nb_ligne][nb_col] == '1') //mur
-                    {
-                        attron(COLOR_PAIR(4));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(4));
-                    }
-                    else if(tab[nb_ligne][nb_col] == '0')//couloir
-                    {
-                        attron(COLOR_PAIR(6));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(6));
-                    }
-                    else if(tab[nb_ligne][nb_col] == 'E')//entree
-                    {
-                        attron(COLOR_PAIR(8));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(8));
-                        xInit = nb_ligne; 								// initialisation de la position du curseur
-                        yInit = nb_col;									// initialisation de la position du curseur
-                    }
-                    else if(tab[nb_ligne][nb_col] == 'S')				//sortie
-                    {
-                        attron(COLOR_PAIR(7));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(7));
-                    }
+                    fscanf(fichier,"%c",&tab[nb_ligne][nb_col]);
+                    switch (tab[nb_ligne][nb_col]){
+						case '1':											//affichage des murs
+							attron(COLOR_PAIR(4));
+							mvprintw(nb_ligne,nb_col," ");
+							attroff(COLOR_PAIR(4));
+						break;
+						
+						case '0':											//affichage des chemins
+							attron(COLOR_PAIR(6));
+							mvprintw(nb_ligne,nb_col," ");
+							attroff(COLOR_PAIR(6));
+                        break;
+                        
+                        case 'E':											//affichage de l'entrée
+							attron(COLOR_PAIR(8));
+							mvprintw(nb_ligne,nb_col," ");
+							attroff(COLOR_PAIR(8));
+							xInit = nb_ligne; 								// initialisation de la position du curseur
+							yInit = nb_col;									// initialisation de la position du curseur
+						break;
+						
+						case 'S':											//affichage de la sortie
+							attron(COLOR_PAIR(7));
+							mvprintw(nb_ligne,nb_col," ");
+							attroff(COLOR_PAIR(7));
+						break;
+					}
                     
                     refresh();       
                 }
