@@ -3,33 +3,42 @@
 #include <stdio.h>
 #include "fonctions.h"
 #include <unistd.h>
+#include "fmod/fmod.h"
 
 
 
 int main (int argc, char **argv)
 {
     initColors();
-    // Declaration des variables
-	int xmax=41,ymax=21;  // pour definir la taille du  labyrinthe
-	char tab[ymax][xmax]; // pour creer un tableau qui sera le labyrinthe par rapport au xmax ymax
-	int nb_ligne,nb_col;  // definie le nombre de ligne et de colone du tableau
+																			// Declaration des variables
+	int xmax=41,ymax=21;  													// pour definir la taille du  labyrinthe
+	char tab[ymax][xmax]; 													// pour creer un tableau qui sera le labyrinthe par rapport au xmax ymax
+	int nb_ligne,nb_col;  													// definie le nombre de ligne et de colone du tableau
 	
-	int xInit, yInit;     // variale pour definir le point d'initialisation du curseur
-	int key=0;			  // touche clavier initialisé a 0
+	int xInit, yInit;     													// variale pour definir le point d'initialisation du curseur
+	int key=0;			  													// touche clavier initialisé a 0
+	FMOD_SYSTEM  *fmodsys;
+	FMOD_RESULT result;
+	FMOD_SOUND *sound;
+	FMOD_CHANNELGROUP *channelgroup;
+	FMOD_CHANNEL *channel = 0;
+	FMOD_System_Create(&fmodsys);
+	FMOD_System_Init(fmodsys, 1, FMOD_INIT_NORMAL, NULL);
 	
-	
+	result = FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM, 0, &sound);	
 
-	//drawLab(xmax, ymax, nb_ligne, nb_col, tab); // x etait en com
+																			//drawLab(xmax, ymax, nb_ligne, nb_col, tab); // x etait en com
 	char chaine;
-    FILE *fichier;  // recupere le fichier ou est stocker le labyrinthe
+    FILE *fichier;  														// recupere le fichier ou est stocker le labyrinthe
     fichier=fopen("files/fichier.txt","r");
     
     if(fichier == NULL)
-        printf("Erreur lors de l'ouverture du fichier\n"); // si le fichier est introuvable, affiche une erreur
+        printf("Erreur lors de l'ouverture du fichier\n"); 					// si le fichier est introuvable, affiche une erreur
     else
     {
-        // initLab();			// initialise le labyrinthe
-        initColors();		// initialise les couleurs du labyrinthe
+        // initLab();														// initialise le labyrinthe
+        initColors();														// initialise les couleurs du labyrinthe
+        FMOD_System_PlaySound(fmodsys, sound, NULL, 0, NULL);
         while (!feof(fichier))  
         {
             for(nb_ligne=0;nb_ligne<=ymax;nb_ligne++)		
@@ -70,7 +79,7 @@ int main (int argc, char **argv)
                 fscanf(fichier,"%c",&chaine);
             }
         }
-        fclose(fichier);   												// ferme le fichier.txt du labyrinthe
+        fclose(fichier);   													// ferme le fichier.txt du labyrinthe
     }
 
 	keypad(stdscr,TRUE);
@@ -79,7 +88,7 @@ int main (int argc, char **argv)
 	nb_col = yInit ;
 	move((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 
-																		// Deplacement dans le labyrinthe
+																			// Deplacement dans le labyrinthe
 
 	while ((key != 'q') && (tab[nb_ligne][nb_col] != 'S'))
 	{
@@ -137,12 +146,14 @@ int main (int argc, char **argv)
 	}
 	if(tab[nb_ligne][nb_col] == 'S')
 	{
-		printf("Vous avez Gagnez");
-		//delay(500); 
+		mvprintw(LINES/2, (COLS / 2) - (xmax / 2), "Vous avez gagnez !");
 		//afficher score et victoire
 	}
 	echo();
-	endwin(); 
+	endwin();
+	FMOD_Sound_Release(sound);
+	FMOD_System_Close(fmodsys);
+	FMOD_System_Release(fmodsys);
 	exit(0);
 	return 0;
 }
