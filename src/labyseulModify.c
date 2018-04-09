@@ -36,33 +36,34 @@ int main (int argc, char **argv)
             {
                 for(nb_col=1;nb_col<=xmax;nb_col++)
                 {
-                   fscanf(fichier,"%c",&tab[nb_ligne][nb_col]);
-                    if(tab[nb_ligne][nb_col] == '1') //mur
-                    {
-                        attron(COLOR_PAIR(4));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(4));
-                    }
-                    else if(tab[nb_ligne][nb_col] == '0')//couloir
-                    {
-                        attron(COLOR_PAIR(6));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(6));
-                    }
-                    else if(tab[nb_ligne][nb_col] == 'E')//entree
-                    {
-                        attron(COLOR_PAIR(8));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(8));
-                        xInit = nb_ligne; 								// initialisation de la position du curseur
-                        yInit = nb_col;									// initialisation de la position du curseur
-                    }
-                    else if(tab[nb_ligne][nb_col] == 'S')				//sortie
-                    {
-                        attron(COLOR_PAIR(7));
-                        mvprintw(nb_ligne,nb_col," ");
-                        attroff(COLOR_PAIR(7));
-                    }
+                    fscanf(fichier,"%c",&tab[nb_ligne][nb_col]);
+                    switch (tab[nb_ligne][nb_col]){
+						case '1':											//affichage des murs
+							attron(COLOR_PAIR(4));
+							mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
+							attroff(COLOR_PAIR(4));
+						break;
+						
+						case '0':											//affichage des chemins
+							attron(COLOR_PAIR(6));
+							mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
+							attroff(COLOR_PAIR(6));
+                        break;
+                        
+                        case 'E':											//affichage de l'entrée
+							attron(COLOR_PAIR(8));
+							mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
+							attroff(COLOR_PAIR(8));
+							xInit = nb_ligne; 								// initialisation de la position du curseur
+							yInit = nb_col;									// initialisation de la position du curseur
+						break;
+						
+						case 'S':											//affichage de la sortie
+							attron(COLOR_PAIR(7));
+							mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
+							attroff(COLOR_PAIR(7));
+						break;
+					}
                     
                     refresh();       
                 }
@@ -74,9 +75,9 @@ int main (int argc, char **argv)
 
 	keypad(stdscr,TRUE);
 	curs_set(0);
-    nb_ligne= xInit ;
-	nb_col= yInit ;
-	move(nb_ligne,nb_col);
+    nb_ligne = xInit ;
+	nb_col = yInit ;
+	move((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 
 																		// Deplacement dans le labyrinthe
 
@@ -86,13 +87,13 @@ int main (int argc, char **argv)
 		switch (key)
 		{
 			case KEY_RIGHT:
-					if (xmax - 1 > nb_col)
+					if ( xmax - 1 > nb_col)
 					{
 						if (tab[nb_ligne][nb_col +1 ] != '1')
 						{
 						    addch (' ');
 						    nb_col ++;
-						   	moveCursor(nb_ligne,nb_col);
+						   	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 					    }
 				    }
 			break;
@@ -103,40 +104,40 @@ int main (int argc, char **argv)
 					    {
 						    addch (' ');
 						    nb_col --;
-						  	moveCursor(nb_ligne,nb_col);					   
+						  	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);					   
 					    }
 				   }
 			break;
 			case KEY_DOWN:
-				    if (ymax - 1 > nb_ligne)
+				    if (  ymax - 1 > nb_ligne)
 				    {
 					    if (tab[nb_ligne + 1][nb_col] != '1')
 					    {
 						    addch (' ');
 						    nb_ligne ++;
-						    moveCursor(nb_ligne,nb_col);
+						    moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 					    }
 				    }
 			break;
 			case KEY_UP:
-				    if (0< nb_ligne)
+				    if (0 < nb_ligne)
 			  	    {
 					    if (tab[nb_ligne - 1][nb_col] != '1')
 					    {
 						    addch (' ');
 						    nb_ligne --;
-						  	moveCursor(nb_ligne,nb_col);
+						  	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 					    }
 				    }
 			break;
 		}
 		key=getch();
-		move(nb_ligne,nb_col);
+		move((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 		refresh();
 	}
 	if(tab[nb_ligne][nb_col] == 'S')
 	{
-		//printf("Vous avez Gagnez");
+		printf("Vous avez Gagnez");
 		//delay(500); 
 		//afficher score et victoire
 	}
