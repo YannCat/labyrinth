@@ -4,6 +4,7 @@
 #include "fonctions.h"
 #include <unistd.h>
 #include "fmod/fmod.h"
+#include <string.h>
 
 
 
@@ -18,14 +19,10 @@ int main (int argc, char **argv)
 	int xInit, yInit;     													// variale pour definir le point d'initialisation du curseur
 	int key=0;			  													// touche clavier initialisé a 0
 	FMOD_SYSTEM  *fmodsys;
-	FMOD_RESULT result;
 	FMOD_SOUND *sound;
-	FMOD_CHANNELGROUP *channelgroup;
-	FMOD_CHANNEL *channel = 0;
 	FMOD_System_Create(&fmodsys);
 	FMOD_System_Init(fmodsys, 1, FMOD_INIT_NORMAL, NULL);
-	
-	result = FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM, 0, &sound);	
+	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM, 0, &sound);	
 
 																			//drawLab(xmax, ymax, nb_ligne, nb_col, tab); // x etait en com
 	char chaine;
@@ -144,9 +141,25 @@ int main (int argc, char **argv)
 		move((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 		refresh();
 	}
+	
 	if(tab[nb_ligne][nb_col] == 'S')
 	{
-		mvprintw(LINES/2, (COLS / 2) - (xmax / 2), "Vous avez gagnez !");
+		wattroff (stdscr, COLOR_PAIR(5));
+		clear();
+		refresh();
+		char *succes= "Vous avez gagnez !";
+		char *quit = "Appuyez sur 'q' pour quitter";
+		int taille= strlen(succes);
+		int taille2 = strlen(quit);
+		while (key != 'q')
+		{
+			attron(A_BOLD);
+			mvprintw(LINES/2, (COLS / 2) - (taille / 2), succes);
+			attroff(A_BOLD);
+			mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
+			key=getch();
+			refresh();
+		}
 		//afficher score et victoire
 	}
 	echo();
