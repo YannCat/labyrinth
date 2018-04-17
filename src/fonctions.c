@@ -27,55 +27,70 @@ void moveCursor(int nb_ligne, int nb_col) //fonction déplacement curseur
 {
     move(nb_ligne,nb_col);
     wattrset (stdscr, COLOR_PAIR(5));
-    addch('$'); //curseur dessin
+    addch(perso); 							//curseur dessin
+    wattroff (stdscr, COLOR_PAIR(5));
 }
 
-/*void initLab()
-{
-	switch (tab[nb_ligne][nb_col]){
-		case '1':											//affichage des murs
-			mur()
-		break;
-		
-		case '0':											//affichage des chemins
-			
-		break;
-		
-		case 'E':											//affichage de l'entrée
-			
-			xInit = nb_ligne; 								// initialisation de la position du curseur
-			yInit = nb_col;									// initialisation de la position du curseur
-		break;
-		
-		case 'S':											//affichage de la sortie
-
-		break;
-}*/
-
-void mur(int nb_ligne, int nb_col)
+void mur()
 {
 	attron(COLOR_PAIR(4));
 	mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
 	attroff(COLOR_PAIR(4));
 }
 
-void chemins(int nb_ligne, int nb_col)
+void chemins()
 {
 	attron(COLOR_PAIR(6));
 	mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
 	attroff(COLOR_PAIR(6));
 }
 
-void entree(int nb_ligne, int nb_col)
+void entree()
 {
 	attron(COLOR_PAIR(8));
 	mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
 	attroff(COLOR_PAIR(8));
 }
 
-void sortie(int nb_ligne, int nb_col)
+void sortie()
 {
 	attron(COLOR_PAIR(7));
 	mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
 	attroff(COLOR_PAIR(7));	
+}
+
+void droite()
+{
+	perso = '>';
+	addch (' ');
+	nb_col ++;
+	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+	compteur ++;
+}
+
+void gauche()
+{
+	perso = '<';
+	addch (' ');
+	nb_col --;
+	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+	compteur ++;
+}
+
+void bas()
+{
+	perso = 'v';
+	addch (' ');
+	nb_ligne ++;
+	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+	compteur ++;
+}
+
+void haut()
+{
+	perso = '^';
+	addch (' ');
+	nb_ligne --;
+	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+	compteur ++;
 }

@@ -7,19 +7,22 @@
 #include <string.h>
 
 
-	int xmax=41,ymax=21; 													// pour definir la taille du  labyrinthe 
-
+	int xmax=41,ymax=21; 													// pour definir la taille du  labyrinthe
+	int nb_ligne,nb_col;  													// definie le nombre de ligne et de colone du tableau
+	int xInit, yInit;     													// variable pour definir le point d'initialisation du curseur
+	int compteur = 0;														// Variable pour le score
+	char perso = 'O';
+	
 int main (int argc, char **argv)
 {																			// Declaration des variables
-	int compteur = 0;													
+													
 	char tab[ymax][xmax]; 													// pour creer un tableau qui sera le labyrinthe par rapport au xmax ymax
-	int nb_ligne,nb_col;  													// definie le nombre de ligne et de colone du tableau
 	char *quit = "Appuyez sur 'q' pour quitter";
 	int taille2 = strlen(quit);
 	//int niv = 0;
 	
-	int xInit, yInit;     													// variable pour definir le point d'initialisation du curseur
-	int key=0;			  													// touche clavier initialisé a 0
+
+	int key = 0;			  													// touche clavier initialisé a 0
 	FMOD_SYSTEM  *fmodsys;
 	FMOD_SOUND *sound;
 	FMOD_System_Create(&fmodsys);
@@ -48,21 +51,21 @@ int main (int argc, char **argv)
                     fscanf(fichier,"%c",&tab[nb_ligne][nb_col]);
                     switch (tab[nb_ligne][nb_col]){
 						case '1':											//affichage des murs
-							mur(nb_ligne, nb_col);
+							mur();
 						break;
 						
 						case '0':											//affichage des chemins
-							chemins(nb_ligne, nb_col);
+							chemins();
                         break;
                         
                         case 'E':											//affichage de l'entrée
-							entree(nb_ligne, nb_col);
+							entree();
 							xInit = nb_ligne; 								// initialisation de la position du curseur
 							yInit = nb_col;									// initialisation de la position du curseur
 						break;
 						
 						case 'S':											//affichage de la sortie
-							sortie(nb_ligne, nb_col);
+							sortie();
 						break;
 					}
                     
@@ -78,7 +81,7 @@ int main (int argc, char **argv)
 	curs_set(0);
     nb_ligne = xInit ;
 	nb_col = yInit ;
-	move((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 	mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
 
 																			// Deplacement dans le labyrinthe
@@ -93,12 +96,9 @@ int main (int argc, char **argv)
 					{
 						if (tab[nb_ligne][nb_col +1 ] != '1')
 						{
-						    addch (' ');
-						    nb_col ++;
-						   	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+						    droite();
 					    }
 				    }
-				    compteur ++;
 			break;
 			
 			case KEY_LEFT:
@@ -106,12 +106,9 @@ int main (int argc, char **argv)
 				   {
 					    if (tab[nb_ligne][nb_col - 1] != '1')
 					    {
-						    addch (' ');
-						    nb_col --;
-						  	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);					   
+						    gauche();					   
 					    }
 				   }
-				   compteur ++;
 			break;
 			
 			case KEY_DOWN:
@@ -119,12 +116,9 @@ int main (int argc, char **argv)
 				    {
 					    if (tab[nb_ligne + 1][nb_col] != '1')
 					    {
-						    addch (' ');
-						    nb_ligne ++;
-						    moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+							bas();
 					    }
 				    }
-				    compteur ++;
 			break;
 			
 			case KEY_UP:
@@ -132,14 +126,12 @@ int main (int argc, char **argv)
 			  	    {
 					    if (tab[nb_ligne - 1][nb_col] != '1')
 					    {
-						    addch (' ');
-						    nb_ligne --;
-						  	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+							haut();
 					    }
 				    }
-				    compteur ++;
 			break;
 		}
+		
 		key=getch();
 		move((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 		refresh();
