@@ -11,4 +11,12 @@ void initLab();
 void moveCursor();
 void drawLab();
 
+void mur();
+void chemins();
+void entree();
+void sortie();
+
+extern int xmax;
+extern int ymax;
+
 #endif
