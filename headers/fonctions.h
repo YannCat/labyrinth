@@ -1,16 +1,13 @@
 #ifndef FONCTIONS_H
 #define FONCTIONS_H
 
-void initColors();
-void drawBar();
-void delMenu();
-int browseMenu();
-int browseMenu();
-WINDOW **drawMenu();
-void initLab();
-void moveCursor();
-void drawLab();
+#define xmax 41					// pour definir la taille du  labyrinthe
+#define ymax 21
 
+void initColors();
+void initLab();
+void depLab();
+void moveCursor();
 void mur();
 void chemins();
 void entree();
@@ -19,14 +16,16 @@ void droite();
 void gauche();
 void bas();
 void haut();
+void fin();
 
-extern int xmax;
-extern int ymax;
 extern int nb_ligne;
 extern int nb_col;
 extern int xInit;
 extern int yInit;
 extern int compteur;
+extern int key;
 extern char perso;
+extern char chaine;
+extern char tab[ymax][xmax];
 
 #endif

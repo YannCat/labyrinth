@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "fonctions.h"
+#include <string.h>
 
 #define ENTER 10
 #define ESCAPE 27
@@ -23,7 +24,88 @@ void initColors()
     keypad(stdscr,TRUE); //initialisation clavier
 }
 
-void moveCursor(int nb_ligne, int nb_col) //fonction déplacement curseur 
+void initLab(char *niveau)
+{
+	 FILE *fichier;  														// recupere le fichier ou est stocker le labyrinthe
+    fichier=fopen(niveau,"r");
+   
+    if(fichier == NULL)
+        printf("Erreur lors de l'ouverture du fichier\n"); 					// si le fichier est introuvable, affiche une erreur
+    else
+    {
+        initColors();														// initialise les couleurs du labyrinthe
+        while (!feof(fichier))  
+        {
+            for(nb_ligne=0;nb_ligne<=ymax;nb_ligne++)		
+            {
+                for(nb_col=1;nb_col<=xmax;nb_col++)
+                {
+                    fscanf(fichier,"%c",&tab[nb_ligne][nb_col]);
+                    switch (tab[nb_ligne][nb_col]){
+						case '1':											//affichage des murs
+							mur();
+						break;
+						
+						case '0':											//affichage des chemins
+							chemins();
+                        break;
+                        
+                        case 'E':											//affichage de l'entrée
+							entree();
+						break;
+						
+						case 'S':											//affichage de la sortie
+							sortie();
+						break;
+					}
+                    
+                    refresh();       
+                }
+                fscanf(fichier,"%c",&chaine);
+            }
+        }
+        fclose(fichier);   													// ferme le fichier.txt du labyrinthe
+    }
+}
+
+void depLab(char *quit, int taille2)
+{
+	keypad(stdscr,TRUE);
+	curs_set(0);
+    nb_ligne = xInit ;
+	nb_col = yInit ;
+	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+	mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
+	
+	while ((key != 'q') && (tab[nb_ligne][nb_col] != 'S'))
+	{
+		wattrset (stdscr, COLOR_PAIR(5));
+		switch (key)
+		{
+			case KEY_RIGHT:
+				droite();
+			break;
+			
+			case KEY_LEFT:
+				gauche();					   
+			break;
+			
+			case KEY_DOWN:
+				bas();
+			break;
+			
+			case KEY_UP:
+				haut();
+			break;
+		}
+		key=getch();
+		move((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+		refresh();
+	}
+	fin(quit, taille2);
+}
+
+void moveCursor(int nb_ligne, int nb_col) 								//fonction déplacement curseur 
 {
     move(nb_ligne,nb_col);
     wattrset (stdscr, COLOR_PAIR(5));
@@ -50,6 +132,8 @@ void entree()
 	attron(COLOR_PAIR(8));
 	mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
 	attroff(COLOR_PAIR(8));
+	xInit = nb_ligne; 								// initialisation de la position du curseur
+	yInit = nb_col;									// initialisation de la position du curseur
 }
 
 void sortie()
@@ -61,36 +145,94 @@ void sortie()
 
 void droite()
 {
-	perso = '>';
-	addch (' ');
-	nb_col ++;
-	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
-	compteur ++;
+	if ( xmax - 1 > nb_col)
+	{
+		if (tab[nb_ligne][nb_col +1 ] != '1')
+		{
+			perso = '>';
+			addch (' ');
+			nb_col ++;
+			moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+			compteur ++;
+		}
+	}
 }
 
 void gauche()
 {
-	perso = '<';
-	addch (' ');
-	nb_col --;
-	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
-	compteur ++;
+	if (0 < nb_col)
+	{
+		if (tab[nb_ligne][nb_col - 1] != '1')
+		{
+			perso = '<';
+			addch (' ');
+			nb_col --;
+			moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+			compteur ++;
+		}
+	}
 }
 
 void bas()
 {
-	perso = 'v';
-	addch (' ');
-	nb_ligne ++;
-	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
-	compteur ++;
+	if (  ymax - 1 > nb_ligne)
+	{
+		if (tab[nb_ligne + 1][nb_col] != '1')
+		{
+			perso = 'v';
+			addch (' ');
+			nb_ligne ++;
+			moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+			compteur ++;
+		}
+	}
 }
 
 void haut()
 {
-	perso = '^';
-	addch (' ');
-	nb_ligne --;
-	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
-	compteur ++;
+	if (0 < nb_ligne)
+	{
+		if (tab[nb_ligne - 1][nb_col] != '1')
+		{
+			perso = '^';
+			addch (' ');
+			nb_ligne --;
+			moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
+			compteur ++;
+		}
+	}
+}
+
+void fin(char *quit, int taille2)
+{
+	if(tab[nb_ligne][nb_col] == 'S')
+	{
+		clear();
+		refresh();
+		char *succes = "Vous avez gagné !";
+		char *mouv = "Score : ";
+		char *continuer = "Niveau Suivant ?";
+		char *choose = "(o) Oui  /  (n)  Non";
+		int taille = strlen(succes);
+		int taille3 = strlen(continuer);
+		int taille4 = strlen(choose);
+		int taille5 = strlen(mouv) + 3;
+		while (key != 'q')
+		{
+			attron(A_BOLD);
+			mvprintw(LINES/2, (COLS / 2) - (taille / 2), succes);
+			attroff(A_BOLD);
+			mvprintw(LINES/2 + 1, (COLS / 2) - (taille5 / 2), "Score : %d", compteur);
+			mvprintw(LINES/2 + 2, (COLS / 2) - (taille3 / 2), continuer);
+			mvprintw(LINES/2 + 3, (COLS / 2) - (taille4 / 2), choose);
+			/*if(key == 'o')
+				{
+					niv++;
+					restart();
+				}*/
+			mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
+			key=getch();
+			refresh();
+		}
+	}
 }
