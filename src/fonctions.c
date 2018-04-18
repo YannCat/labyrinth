@@ -234,6 +234,7 @@ void fin()
 			key = getch();
 			refresh();
 			compteur = 0;
+			perso = 'O';
 		}
 		if(key == 'o')
 		{
