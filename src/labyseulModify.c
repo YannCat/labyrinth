@@ -15,26 +15,21 @@ int key = 0;			  												// touche clavier initialisé a 0
 char tab[ymax][xmax]; 													// pour creer un tableau qui sera le labyrinthe par rapport au xmax ymax
 char perso = 'O';
 char chaine;
+char *laby = "files/lv1.txt";
+char *quit = "Appuyez sur '%c' pour quitter";
+int taille2 = 28;
+int niv = 0;
 
 int main (int argc, char **argv)
-{																			// Declaration des variables
-													
-
-	char *quit = "Appuyez sur 'q' pour quitter";
-	int taille2 = strlen(quit);
-	int niv = 0;
-	
+{		
 	FMOD_SYSTEM  *fmodsys;
 	FMOD_SOUND *sound;
 	FMOD_System_Create(&fmodsys);
 	FMOD_System_Init(fmodsys, 1, FMOD_INIT_NORMAL, NULL);
-	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM, 0, &sound);	
-
-	char *laby = "files/lv1.txt";
-	
-	initLab(laby);														// Initialise le Labyrinthe
+	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM, 0, &sound);
 	FMOD_System_PlaySound(fmodsys, sound, NULL, 0, NULL);
-	depLab(quit, taille2);												// Deplacement dans le labyrinthe
+
+	prog_princ();
 	
 	echo();
 	endwin();
