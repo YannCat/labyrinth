@@ -13,11 +13,11 @@ void initColors()
     noecho(); 
     start_color();
     init_pair(1,COLOR_WHITE,COLOR_BLACK);
-    init_pair(2,COLOR_BLACK,COLOR_WHITE); // couleur barre menu
+    init_pair(2,COLOR_BLACK,COLOR_WHITE);
     init_pair(3,COLOR_RED,COLOR_WHITE); 
-    init_pair(4, COLOR_BLACK, COLOR_BLACK); //couleur mur
-    init_pair(5, COLOR_WHITE, COLOR_GREEN); //couleur curseur
-    init_pair(6, COLOR_WHITE, COLOR_WHITE); 
+    init_pair(4, COLOR_YELLOW, COLOR_YELLOW); //couleur mur
+    init_pair(5, COLOR_WHITE, COLOR_BLUE); //couleur curseur
+    init_pair(6, COLOR_WHITE, COLOR_WHITE); //couleur couloir
     init_pair(7, COLOR_RED, COLOR_RED); //sortie
     init_pair(8, COLOR_GREEN, COLOR_GREEN); //entree
     curs_set(0); // initalisation curseur
@@ -77,7 +77,7 @@ void depLab(char *quit, int taille2)
 	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 	mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit, 'q');
 	
-	while ((key != 'q') && (tab[nb_ligne][nb_col] != 'S'))
+	while ((key != 'q') && (key != 'Q') && (tab[nb_ligne][nb_col] != 'S'))
 	{
 		wattrset (stdscr, COLOR_PAIR(5));
 		switch (key)
@@ -222,24 +222,27 @@ void fin()
 		int taille3 = strlen(continuer);
 		int taille4 = strlen(choose);
 		int taille5 = strlen(mouv) + 3;
-		while (key != 'o' && key != 'n')
+		while (key != 'o' && key != 'n' && key != 'O' && key != 'N')
 		{
 			attron(A_BOLD);
-			mvprintw(LINES/2, (COLS / 2) - (taille / 2), succes);
+			mvprintw(LINES/2 - 1, (COLS / 2) - (taille / 2), succes);
 			attroff(A_BOLD);
-			mvprintw(LINES/2 + 1, (COLS / 2) - (taille5 / 2), "Score : %d", compteur);
-			mvprintw(LINES/2 + 2, (COLS / 2) - (taille3 / 2), continuer);
-			mvprintw(LINES/2 + 3, (COLS / 2) - (taille4 / 2), choose);
+			mvprintw(LINES/2, (COLS / 2) - (taille5 / 2), "Score : %d", compteur);
+			mvprintw(LINES/2 + 1, (COLS / 2) - (taille3 / 2), continuer);
+			mvprintw(LINES/2 + 2, (COLS / 2) - (taille4 / 2), choose);
 			mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit, 'n');
 			key = getch();
 			refresh();
-			compteur = 0;
 			perso = 'O';
 		}
 		if(key == 'o')
 		{
-		niv++;
-		prog_princ();
+			if (niv < 2)
+			{
+				compteur = 0;
+				niv++;
+				prog_princ();
+			}
 		}
 	}
 }
@@ -249,7 +252,6 @@ void choix_lvl(int choix)
 	char *lv1 = "files/lv1.txt";
 	char *lv2 = "files/lv2.txt";
 	char *lv3 = "files/lv3.txt";
-
 	
 	switch (choix)
 		{
