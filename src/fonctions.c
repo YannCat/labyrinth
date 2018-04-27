@@ -97,17 +97,16 @@ void choix_menu()
 		refresh();
 		prog_princ();
 	break;
-	case 1 :			//Choisir la map
+	case 1 :			//Reprendre
 		clear();
 		refresh();
 		reprendre();
 		prog_princ();
 	break;	
-	case 2 :			//Configuration
+	case 2 :			//Choisir map
 		clear();
 		refresh();
-		endwin();
-		exit(0);
+		menu_lvl();
 	break;	
 	case 3 :			//Score
 		clear();
@@ -130,7 +129,40 @@ void choix_menu()
 	}
 }
 
-
+void menu_lvl()
+{	
+	char *choiceslvl[] = {
+                        "               Level 1                 ",
+                        "               Level 2                 ", 
+                        "               Level 3                 ",
+                        "               Level 4                 ",
+                        "               Quitter                 ",
+                        (char *)NULL,
+                  };				
+	MENU *my_menu_lvl;
+    WINDOW *my_menu_win_lvl;
+    int lvl_choices = ARRAY_SIZE(choiceslvl);
+    ITEM **my_items_lvl = calloc(lvl_choices, sizeof(ITEM *));
+    int i;
+    char *titre_lvl = "Play Level";
+	
+	initcurses();													// Initialize curses
+    creation_items(lvl_choices, choiceslvl, my_items_lvl);					// Creation des choix du menu
+    my_menu_lvl = new_menu(my_items_lvl);									// Creation du menu level
+	my_menu_win_lvl = newwin(10, 40, LINES/2 - 5, COLS/2 - 19);			// ( hauteur,largeur,ypos,xpos)
+	keypad(my_menu_win_lvl, TRUE);
+	set_menu_win(my_menu_lvl, my_menu_win_lvl);
+	set_menu_sub(my_menu_lvl, derwin(my_menu_win_lvl, 6, 38, 3, 1));
+	titre_menu(my_menu_win_lvl, titre_lvl);									// Affichage du titre du menu
+	post_menu(my_menu_lvl);
+	wrefresh(my_menu_win_lvl);
+	dep_menu(my_menu_lvl, my_menu_win_lvl);									// Deplacement dans le menu
+	unpost_menu(my_menu_lvl);
+	free_menu(my_menu_lvl);
+	for(i = 0; i < lvl_choices; i++)
+			free_item(my_items_lvl[i]);
+	endwin();
+}
 /******************************************************************Labyrinthe*************************************************************************************/
 
 void initColors()
@@ -257,6 +289,7 @@ void trace_cursor()
 	if (niv == 0) couleur = 5;
 	if (niv == 1) couleur = 3;
 	if (niv == 2) couleur = 2;
+	if (niv == 3) couleur = 5;
 	wattrset (stdscr, COLOR_PAIR(couleur));
 }
 
@@ -266,6 +299,7 @@ void mur()
 	if (niv == 0) couleur = 8;
 	if (niv == 1) couleur = 4;
 	if (niv == 2) couleur = 1;
+	if (niv == 3) couleur = 7;
 	attron(COLOR_PAIR(couleur));
 	mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
 	attroff(COLOR_PAIR(couleur));
@@ -420,6 +454,7 @@ void choix_lvl(int choix)
 	char *lv1 = "files/lv1.txt";
 	char *lv2 = "files/lv2.txt";
 	char *lv3 = "files/lv3.txt";
+	char *lv4 = "files/lv4.txt";
 	
 	switch (choix)
 		{
@@ -434,6 +469,9 @@ void choix_lvl(int choix)
 			
 			case 2:
 				laby = lv3;
+			break;
+			case 3:
+				laby = lv4;
 			break;
 		}
 }
@@ -498,7 +536,7 @@ void choix_pseudo()
 	attroff(A_BOLD);
 	mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
 	getstr(pseudo);
-	mvscanw(LINES/2 , (COLS / 2) + taille, "%s", pseudo);
+	mvscanw(LINES/2 , (COLS / 2) + taille, "%s", &pseudo);
 	refresh();
 }
 	

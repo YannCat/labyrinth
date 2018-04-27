@@ -3,7 +3,7 @@
 
 #define xmax	41					// pour definir la taille du  labyrinthe
 #define ymax	21
-#define nb_map	3
+#define nb_map	4
 #define ENTER	10
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
@@ -48,6 +48,7 @@ extern char *laby;
 	/**************************************************************Fonction Et Variables Nécessaire au fonctionnement du menu********************************************************************/
 
 void menu_princ();
+void menu_lvl();
 void creation_items();
 void print_in_middle();
 void choix_menu();

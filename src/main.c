@@ -3,7 +3,7 @@
 #include "fonctions.h"
 #include <menu.h>				// Inclue automatiquement curses.h
 #include <unistd.h>
-#include "fmod/fmod.h"
+#include "fmod.h"
 #include <string.h>
 
 
