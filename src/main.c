@@ -1,10 +1,11 @@
-#include <curses.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "fonctions.h"
+#include <menu.h>				// Inclue automatiquement curses.h
 #include <unistd.h>
-#include "fmod/fmod.h"
+#include "fmod.h"
 #include <string.h>
+#include <time.h>
 
 
 
@@ -12,15 +13,17 @@ int nb_ligne,nb_col;  													// definie le nombre de ligne et de colone du
 int xInit, yInit;     													// variable pour definir le point d'initialisation du curseur
 int compteur = 0;														// Variable pour le score
 int key = 0;			  												// touche clavier initialisé a 0
-char tab[ymax][xmax]; 													// pour creer un tableau qui sera le labyrinthe par rapport au xmax ymax
+char tab[ymax][xmax]; 													// créer un tableau de dimension ymax * xmax
 char perso = 'O';
 char chaine;
 char *laby = "files/lv1.txt";
-char *quit = "Appuyez sur '%c' pour quitter";
-int taille2 = 28;
 int niv = 0;
+int is_reload = 0;
+int start, stop;
+int total_time;
+char pseudo[4];
 
-int main (int argc, char **argv)
+int main ()
 {		
 	FMOD_SYSTEM  *fmodsys;
 	FMOD_SOUND *sound;
@@ -29,10 +32,8 @@ int main (int argc, char **argv)
 	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM, 0, &sound);
 	FMOD_System_PlaySound(fmodsys, sound, NULL, 0, NULL);
 
-	prog_princ();
+	menu_princ();
 	
-	echo();
-	endwin();
 	FMOD_Sound_Release(sound);
 	FMOD_System_Close(fmodsys);
 	FMOD_System_Release(fmodsys);
