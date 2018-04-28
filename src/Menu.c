@@ -5,6 +5,7 @@
 #include "fonctions.h"
 
 int highlight = 0;
+int highlight_lvl = 0;
 
 
 void menu_princ()

@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include "fonctions.h"
 #include <string.h>
+#include <time.h>
+#include <unistd.h>
+
 
 #define ESCAPE 27
 
@@ -88,6 +91,34 @@ void dep_menu(MENU *menu, WINDOW *win)
 
 }
 
+void dep_menu_lvl(MENU *menu, WINDOW *win)
+{
+	int c;
+	while(1)						// avant : while(c != KEY_F(2))
+	{
+			c = getch(); 
+		    switch(c)
+	        {	
+			case KEY_DOWN:
+				menu_driver(menu, REQ_DOWN_ITEM);
+				if (highlight_lvl < 5)				highlight ++;
+				
+			break;
+			
+			case KEY_UP:
+				menu_driver(menu, REQ_UP_ITEM);
+				if (highlight_lvl > 0)				highlight --;
+			break;
+			
+			case ENTER: /* Enter */
+				choix_menu_lvl();
+			break;
+			}
+                wrefresh(win);
+	}	
+
+}
+
 void choix_menu()
 {
 	switch (highlight) 
@@ -108,17 +139,16 @@ void choix_menu()
 		refresh();
 		menu_lvl();
 	break;	
-	case 3 :			//Score
+	case 3 :			//Configuration
 		clear();
 		refresh();
 		endwin();
 		exit(0);
 	break;	
-	case 4 :			//Quitter
+	case 4 :			//Score
 		clear();
 		refresh();
-		endwin();
-		exit(0);
+		affich_score();
 	break;
 	case 5 :			//Quitter
 		clear();
@@ -126,6 +156,43 @@ void choix_menu()
 		endwin();
 		exit(0);
 	break;				
+	}
+}
+
+void choix_menu_lvl()
+{
+	switch (highlight_lvl) 
+	{	
+	case 0 :			//Map 1
+		clear();
+		refresh();
+		niv = 0;
+		prog_princ();
+	break;
+	case 1 :			//Map 2
+		clear();
+		refresh();
+		niv = 1;
+		prog_princ();
+	break;	
+	case 2 :			//Map 3
+		clear();
+		refresh();
+		niv = 2;
+		prog_princ();
+	break;	
+	case 3 :			//Map 4
+		clear();
+		refresh();
+		niv = 3;
+		prog_princ();
+	break;	
+	case 4 :			//Quitter
+		clear();
+		refresh();
+		endwin();
+		exit(0);
+	break;			
 	}
 }
 
@@ -144,12 +211,12 @@ void menu_lvl()
     int lvl_choices = ARRAY_SIZE(choiceslvl);
     ITEM **my_items_lvl = calloc(lvl_choices, sizeof(ITEM *));
     int i;
-    char *titre_lvl = "Play Level";
+    char *titre_lvl = "Choix du Niveau";
 	
 	initcurses();													// Initialize curses
     creation_items(lvl_choices, choiceslvl, my_items_lvl);					// Creation des choix du menu
     my_menu_lvl = new_menu(my_items_lvl);									// Creation du menu level
-	my_menu_win_lvl = newwin(10, 40, LINES/2 - 5, COLS/2 - 19);			// ( hauteur,largeur,ypos,xpos)
+	my_menu_win_lvl = newwin(9, 40, LINES/2 - 5, COLS/2 - 19);			// ( hauteur,largeur,ypos,xpos)
 	keypad(my_menu_win_lvl, TRUE);
 	set_menu_win(my_menu_lvl, my_menu_win_lvl);
 	set_menu_sub(my_menu_lvl, derwin(my_menu_win_lvl, 6, 38, 3, 1));
@@ -232,6 +299,7 @@ void depLab()
 	nb_col = yInit ;
 	moveCursor((LINES/2)-(ymax/2) + nb_ligne, (COLS/2)-(xmax/2) + nb_col);
 	mvprintw(LINES - 1,(COLS / 2) - (taille / 2), quit);
+	start = time(0);
 	while (key != KEY_F(2) && (tab[nb_ligne][nb_col] != 'S'))
 	{
 		trace_cursor();
@@ -277,6 +345,7 @@ void moveCursor(int nb_ligne, int nb_col) 								//fonction déplacement curseu
 	if (niv == 0) couleur = 5;
 	if (niv == 1) couleur = 3;
 	if (niv == 2) couleur = 2;
+	if (niv == 3) couleur = 5;
     move(nb_ligne,nb_col);
     wattrset (stdscr, COLOR_PAIR(couleur));
     addch(perso); 														//curseur dessin
@@ -325,9 +394,12 @@ void entree()
 
 void sortie()
 {
-	attron(COLOR_PAIR(7));
+	int couleur;
+	if( niv == 3) couleur = 8;
+	else couleur = 7;
+	attron(COLOR_PAIR(couleur));
 	mvprintw((LINES/2)-(ymax/2) + nb_ligne,(COLS/2)-(xmax/2) + nb_col," ");
-	attroff(COLOR_PAIR(7));	
+	attroff(COLOR_PAIR(couleur));	
 }
 
 void droite()
@@ -394,6 +466,8 @@ void fin()
 {
 	if(tab[nb_ligne][nb_col] == 'S')
 	{
+		stop = time(0);
+		total_time = (stop - start);
 		clear();
 		refresh();
 		while (key != 'o' && key != 'O' && key != KEY_F(2))
@@ -424,7 +498,8 @@ void fin()
 void affich_fin()
 {
 	char *succes = "Vous avez gagné !";
-	char *mouv = "Score : ";
+	char *mouv = "Score : %d";
+	char *temps = "Temps : %d s";
 	char *continuer = "Niveau Suivant ?";
 	char *choose = "(o) Oui  /  (F2)  Menu";
 	char *quit = "Appuyez sur F2 pour afficher le menu";
@@ -438,10 +513,12 @@ void affich_fin()
 	int taille3 = strlen(continuer);
 	int taille4 = strlen(choose);
 	int taille5 = strlen(mouv) + 3;
+	int taille6 = strlen(temps);
 	attron(A_BOLD);
-	mvprintw(LINES/2 - 1, (COLS / 2) - (taille / 2), succes);
+	mvprintw(LINES/2 - 2, (COLS / 2) - (taille / 2), succes);
 	attroff(A_BOLD);
-	mvprintw(LINES/2, (COLS / 2) - (taille5 / 2), "Score : %d", compteur);
+	mvprintw(LINES/2 - 1, (COLS / 2) - (taille5 / 2), mouv, compteur);
+	mvprintw(LINES/2, (COLS / 2) - (taille6 / 2), temps, total_time);
 	mvprintw(LINES/2 + 1, (COLS / 2) - (taille3 / 2), continuer);
 	mvprintw(LINES/2 + 2, (COLS / 2) - (taille4 / 2), choose);
 	mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
@@ -485,9 +562,32 @@ void tab_score(int score)
         printf("Erreur lors de l'ouverture du fichier\n"); 					// si le fichier est introuvable, affiche une erreur
     else
     {
-		fprintf(fichier,"%d¤%d\n",niv + 1, score);
+		fprintf(fichier,"%s\t%d\t%d\t%d\n", pseudo, niv + 1, score, total_time);
 	}
     fclose(fichier);
+}
+
+void affich_score()
+{
+	int level, point, temps;
+	int i = 1;
+	char nom[50] = {'\0'};
+	char *titre = "Pseudo | Niveau  | Score	 | Temps";
+ char *afficher = "%s     | %d      | %d     | %d   ";
+	int taille = strlen(titre);
+	int taille2 = strlen(afficher) + 2;
+	char *tab_score = "files/score.txt";
+	FILE *fichier;
+	fichier = fopen(tab_score,"r");
+	mvprintw(LINES/2 , (COLS / 2) - (taille / 2), titre);
+	while (!feof(fichier))  
+	{
+		fscanf(fichier,"%s\t%d\t%d\t%d\n", nom, &level, &point, &temps);
+		mvprintw(LINES/2 + i, (COLS / 2) - (taille2 / 2), afficher, nom, level, point, temps);
+		i++;
+		
+	}
+    fclose(fichier);   
 }
 
 void save()
@@ -526,7 +626,6 @@ void choix_pseudo()
 {
 	clear();
 	refresh();
-	char pseudo[4];
 	char *choix = "Entrez votre pseudo (4 caractère max):";
 	char *quit = "Appuyez sur F2 pour afficher le menu";
 	int taille = strlen(choix);
@@ -535,8 +634,8 @@ void choix_pseudo()
 	mvprintw(LINES/2 , (COLS / 2) - (taille / 2), choix);
 	attroff(A_BOLD);
 	mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
-	getstr(pseudo);
-	mvscanw(LINES/2 , (COLS / 2) + taille, "%s", &pseudo);
+	//getstr(pseudo);
+	mvscanw(LINES/2 + 1, (COLS / 2) + taille, "%s", &pseudo);
 	refresh();
 }
 	

@@ -44,6 +44,10 @@ extern char perso;
 extern char chaine;
 extern char tab[ymax][xmax];
 extern char *laby;
+extern int start;
+extern int stop;
+extern int total_time;
+extern char pseudo[4];
 
 	/**************************************************************Fonction Et Variables Nécessaire au fonctionnement du menu********************************************************************/
 
@@ -54,8 +58,12 @@ void print_in_middle();
 void choix_menu();
 void titre_menu();
 void dep_menu();
-void reprendre();	
+void reprendre();
+void dep_menu_lvl();
+void choix_menu_lvl();
+void affich_score();	
 
 extern int highlight;
+extern int highlight_lvl;
 
 #endif

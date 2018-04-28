@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "fmod.h"
 #include <string.h>
+#include <time.h>
 
 
 
@@ -18,6 +19,9 @@ char chaine;
 char *laby = "files/lv1.txt";
 int niv = 0;
 int is_reload = 0;
+int start, stop;
+int total_time;
+char pseudo[4];
 
 int main ()
 {		
