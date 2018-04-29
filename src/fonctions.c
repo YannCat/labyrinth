@@ -20,218 +20,6 @@ void initcurses()
     keypad(stdscr,TRUE);	// initialisation clavier
 }
 
-void creation_items(int n_choices, char *choices[], ITEM **my_items)
-{
-	int i;
-	for(i = 0; i < n_choices; i++)
-	{
-		my_items[i] = new_item(choices[i], "");
-	}
-}
-
-void titre_menu(WINDOW *win, char *titre)
-{
-	box(win, 0, 0);
-	print_in_middle(win, 1, 0, 40, titre, COLOR_PAIR(1));
-	mvwaddch(win, 2, 0, ACS_LTEE);
-	mvwhline(win, 2, 1, ACS_HLINE, 38);
-	mvwaddch(win, 2, 39, ACS_RTEE);
-	//mvprintw(LINES - 1, 0, "F2 pour quitter");
-	refresh();
-}
-
-void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color)
-{	int taille, x, y;
-	float temp;
-	
-	if(win == NULL)
-		win = stdscr;
-	getyx(win, y, x);
-	if(startx != 0)
-		x = startx;
-	if(starty != 0)
-		y = starty;
-	if(width == 0)
-		width = 80;
-
-	taille = strlen(string);
-	temp = (width - taille)/ 2;
-	x = startx + (int)temp;
-	wattron(win, color);
-	mvwprintw(win, y, x, "%s", string);
-	wattroff(win, color);
-	refresh();
-}
-
-void dep_menu(MENU *menu, WINDOW *win)
-{
-	int c;
-	while(1)						// avant : while(c != KEY_F(2))
-	{
-			c = getch(); 
-		    switch(c)
-	        {	
-			case KEY_DOWN:
-				menu_driver(menu, REQ_DOWN_ITEM);
-				if (highlight < 5)				highlight ++;
-				
-			break;
-			
-			case KEY_UP:
-				menu_driver(menu, REQ_UP_ITEM);
-				if (highlight > 0)				highlight --;
-			break;
-			
-			case ENTER: /* Enter */
-				choix_menu();
-			break;
-			}
-                wrefresh(win);
-	}	
-
-}
-
-void dep_menu_lvl(MENU *menu, WINDOW *win)
-{
-	int c;
-	while(1)						// avant : while(c != KEY_F(2))
-	{
-			c = getch(); 
-		    switch(c)
-	        {	
-			case KEY_DOWN:
-				menu_driver(menu, REQ_DOWN_ITEM);
-				if (highlight_lvl < 5)				highlight ++;
-				
-			break;
-			
-			case KEY_UP:
-				menu_driver(menu, REQ_UP_ITEM);
-				if (highlight_lvl > 0)				highlight --;
-			break;
-			
-			case ENTER: /* Enter */
-				choix_menu_lvl();
-			break;
-			}
-                wrefresh(win);
-	}	
-
-}
-
-void choix_menu()
-{
-	switch (highlight) 
-	{	
-	case 0 :			//Lancer le jeu
-		clear();
-		refresh();
-		prog_princ();
-	break;
-	case 1 :			//Reprendre
-		clear();
-		refresh();
-		reprendre();
-		prog_princ();
-	break;	
-	case 2 :			//Choisir map
-		clear();
-		refresh();
-		menu_lvl();
-	break;	
-	case 3 :			//Configuration
-		clear();
-		refresh();
-		endwin();
-		exit(0);
-	break;	
-	case 4 :			//Score
-		clear();
-		refresh();
-		affich_score();
-	break;
-	case 5 :			//Quitter
-		clear();
-		refresh();
-		endwin();
-		exit(0);
-	break;				
-	}
-}
-
-void choix_menu_lvl()
-{
-	switch (highlight_lvl) 
-	{	
-	case 0 :			//Map 1
-		clear();
-		refresh();
-		niv = 0;
-		prog_princ();
-	break;
-	case 1 :			//Map 2
-		clear();
-		refresh();
-		niv = 1;
-		prog_princ();
-	break;	
-	case 2 :			//Map 3
-		clear();
-		refresh();
-		niv = 2;
-		prog_princ();
-	break;	
-	case 3 :			//Map 4
-		clear();
-		refresh();
-		niv = 3;
-		prog_princ();
-	break;	
-	case 4 :			//Quitter
-		clear();
-		refresh();
-		endwin();
-		exit(0);
-	break;			
-	}
-}
-
-void menu_lvl()
-{	
-	char *choiceslvl[] = {
-                        "               Level 1                 ",
-                        "               Level 2                 ", 
-                        "               Level 3                 ",
-                        "               Level 4                 ",
-                        "               Quitter                 ",
-                        (char *)NULL,
-                  };				
-	MENU *my_menu_lvl;
-    WINDOW *my_menu_win_lvl;
-    int lvl_choices = ARRAY_SIZE(choiceslvl);
-    ITEM **my_items_lvl = calloc(lvl_choices, sizeof(ITEM *));
-    int i;
-    char *titre_lvl = "Choix du Niveau";
-	
-	initcurses();													// Initialize curses
-    creation_items(lvl_choices, choiceslvl, my_items_lvl);					// Creation des choix du menu
-    my_menu_lvl = new_menu(my_items_lvl);									// Creation du menu level
-	my_menu_win_lvl = newwin(9, 40, LINES/2 - 5, COLS/2 - 19);			// ( hauteur,largeur,ypos,xpos)
-	keypad(my_menu_win_lvl, TRUE);
-	set_menu_win(my_menu_lvl, my_menu_win_lvl);
-	set_menu_sub(my_menu_lvl, derwin(my_menu_win_lvl, 6, 38, 3, 1));
-	titre_menu(my_menu_win_lvl, titre_lvl);									// Affichage du titre du menu
-	post_menu(my_menu_lvl);
-	wrefresh(my_menu_win_lvl);
-	dep_menu(my_menu_lvl, my_menu_win_lvl);									// Deplacement dans le menu
-	unpost_menu(my_menu_lvl);
-	free_menu(my_menu_lvl);
-	for(i = 0; i < lvl_choices; i++)
-			free_item(my_items_lvl[i]);
-	endwin();
-}
-/******************************************************************Labyrinthe*************************************************************************************/
-
 void initColors()
 { 
     start_color();
@@ -248,14 +36,14 @@ void initColors()
 void initLab(char *niveau)
 {
 	 FILE *fichier;  														// recupere le fichier ou est stocker le labyrinthe
-    fichier=fopen(niveau,"r");
+    fichier = fopen(niveau,"r");
    
     if(fichier == NULL)
         printf("Erreur lors de l'ouverture du fichier\n"); 					// si le fichier est introuvable, affiche une erreur
     else
     {
         initColors();														// initialise les couleurs du labyrinthe
-        while (!feof(fichier))  
+        while (!feof(fichier))
         {
             for(nb_ligne=0;nb_ligne<=ymax;nb_ligne++)		
             {
@@ -330,8 +118,7 @@ void depLab()
 		save();
 		clear();
 		refresh();
-		menu_princ();
-		save();
+		menu_game();
 	}
 	else
 	{
@@ -490,7 +277,8 @@ void fin()
 			tab_score(compteur);
 			clear();
 			refresh();
-			menu_princ();
+			endwin();
+			exit(0);
 		}
 	}
 }
@@ -502,7 +290,7 @@ void affich_fin()
 	char *temps = "Temps : %d s";
 	char *continuer = "Niveau Suivant ?";
 	char *choose = "(o) Oui  /  (F2)  Menu";
-	char *quit = "Appuyez sur F2 pour afficher le menu";
+	char *quit = "Appuyez sur F2 pour quitter";
 	if(niv >= nb_map - 1)
 	{
 		continuer = "Vous avez fini le jeu, bravo !";
@@ -526,28 +314,43 @@ void affich_fin()
 	refresh();
 }
 
-void choix_lvl(int choix)
+void choix_lvl()
 {
 	char *lv1 = "files/lv1.txt";
 	char *lv2 = "files/lv2.txt";
 	char *lv3 = "files/lv3.txt";
 	char *lv4 = "files/lv4.txt";
 	
-	switch (choix)
+	switch (niv)
 		{
 			case 0:
-				choix_pseudo();
+				if(is_reload == 0 && new_party == 1)
+				{
+					choix_pseudo();
+				}
 				laby = lv1;
 			break;
 			
 			case 1:
+				if(is_reload == 0 && new_party == 1)
+				{
+					choix_pseudo();
+				}
 				laby = lv2;
 			break;
 			
 			case 2:
+				if(is_reload == 0 && new_party == 1)
+				{
+					choix_pseudo();
+				}
 				laby = lv3;
 			break;
 			case 3:
+				if(is_reload == 0 && new_party == 1)
+				{
+					choix_pseudo();
+				}
 				laby = lv4;
 			break;
 		}
@@ -569,23 +372,81 @@ void tab_score(int score)
 
 void affich_score()
 {
-	int level, point, temps;
-	int i = 1;
-	char nom[50] = {'\0'};
-	char *titre = "Pseudo | Niveau  | Score	 | Temps";
- char *afficher = "%s     | %d      | %d     | %d   ";
-	int taille = strlen(titre);
-	int taille2 = strlen(afficher) + 2;
+	clear();
+	endwin();
+	WINDOW *f1, *f2, *f3, *f4;
+	initscr();
+    cbreak();
+    noecho();
+	start_color();			// initialisation couleurs
+    init_pair(1,COLOR_RED,COLOR_BLACK);
+    init_pair(2,COLOR_GREEN,COLOR_BLACK);
+    init_pair(3,COLOR_BLUE,COLOR_BLACK);
+    init_pair(4,COLOR_YELLOW,COLOR_BLACK);
+	
+	f1 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, 0);
+	f2 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, (COLS / 4)); 
+	f3 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, 2 * (COLS / 4)); 
+	f4 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, 3 * (COLS / 4)); 
+	
+	box(f1, ACS_VLINE, ACS_HLINE);
+    box(f2, ACS_VLINE, ACS_HLINE);
+    box(f3, ACS_VLINE, ACS_HLINE);
+    box(f4, ACS_VLINE, ACS_HLINE);
+    
+	char *titre1 = "Pseudo";
+	char *titre2 = "Niveau";
+	char *titre3 = "Score";
+	char *titre4 = "Temps";
+	
+	int t1 = strlen(titre1);
+	int t2 = strlen(titre2);
+	int t3 = strlen(titre3);
+	int t4 = strlen(titre4);
+	
+    wattrset (f1, COLOR_PAIR(1));
+    wattrset (f2, COLOR_PAIR(2));
+    wattrset (f3, COLOR_PAIR(3));
+    wattrset (f4, COLOR_PAIR(4));
+    
+    mvwprintw(f1, 1, ((COLS / 4) / 2) - (t1 / 2), titre1);
+    mvwprintw(f2, 1, ((COLS / 4) / 2) - (t2 / 2), titre2);
+    mvwprintw(f3, 1, ((COLS / 4) / 2) - (t3 / 2), titre3);
+    mvwprintw(f4, 1, ((COLS / 4) / 2) - (t4 / 2), titre4);
+    
+    wattroff (f1, COLOR_PAIR(1));
+    wattroff (f2, COLOR_PAIR(2));
+    wattroff (f3, COLOR_PAIR(3));
+    wattroff (f4, COLOR_PAIR(4));
+        
+    wrefresh(f1);
+    wrefresh(f2);
+    wrefresh(f3);
+    wrefresh(f4);
+    
+	int i = 0;
+	char nom[50] = {"\0"};
+	char level[10] = {"\0"};
+	char point[4] = {"\0"};
+	char temps[5] = {"\0"};
+	
 	char *tab_score = "files/score.txt";
 	FILE *fichier;
 	fichier = fopen(tab_score,"r");
-	mvprintw(LINES/2 , (COLS / 2) - (taille / 2), titre);
+	
 	while (!feof(fichier))  
 	{
-		fscanf(fichier,"%s\t%d\t%d\t%d\n", nom, &level, &point, &temps);
-		mvprintw(LINES/2 + i, (COLS / 2) - (taille2 / 2), afficher, nom, level, point, temps);
-		i++;
+		fscanf(fichier,"%s\t%s\t%s\t%s\n", 	nom, level, point, temps);
+		int t11 = strlen(nom);
+		int t21 = strlen(level);
+		int t31 = strlen(point);
+		int t41 = strlen(temps);
 		
+		mvwprintw(f1, 2 + i, ((COLS / 4) / 2) - (t11 / 2), nom);
+		mvwprintw(f2, 2 + i, ((COLS / 4) / 2) - (t21 / 2), level);
+		mvwprintw(f3, 2 + i, ((COLS / 4) / 2) - (t31 / 2), point);
+		mvwprintw(f4, 2 + i, ((COLS / 4) / 2) - (t41 / 2), temps);
+		i++;		
 	}
     fclose(fichier);   
 }
@@ -637,11 +498,12 @@ void choix_pseudo()
 	//getstr(pseudo);
 	mvscanw(LINES/2 + 1, (COLS / 2) + taille, "%s", &pseudo);
 	refresh();
+	new_party = 0;
 }
 	
 void prog_princ()
 {
-	choix_lvl(niv);														// Choix de la map.
+	choix_lvl();														// Choix de la map.
 	initLab(laby);														// Initialise le Labyrinthe
-	depLab();												// Deplacement dans le labyrinthe
+	depLab();															// Deplacement dans le labyrinthe
 }

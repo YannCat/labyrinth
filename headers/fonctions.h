@@ -40,6 +40,7 @@ extern int compteur;
 extern int key;
 extern int niv;
 extern int is_reload;
+extern int new_party;
 extern char perso;
 extern char chaine;
 extern char tab[ymax][xmax];
@@ -53,17 +54,25 @@ extern char pseudo[4];
 
 void menu_princ();
 void menu_lvl();
+void menu_game();
+
+void choix_menu();
+void choix_menu_lvl();
+void choix_menu_game();
+
+void dep_menu();
+void dep_menu_lvl();
+void dep_menu_game();
+
+void titre_menu();
+void suppr_menu();
+void reprendre();
 void creation_items();
 void print_in_middle();
-void choix_menu();
-void titre_menu();
-void dep_menu();
-void reprendre();
-void dep_menu_lvl();
-void choix_menu_lvl();
-void affich_score();	
+void affich_score();
 
 extern int highlight;
 extern int highlight_lvl;
+extern int highlight_game;
 
 #endif

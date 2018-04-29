@@ -16,9 +16,10 @@ int key = 0;			  												// touche clavier initialisé a 0
 char tab[ymax][xmax]; 													// créer un tableau de dimension ymax * xmax
 char perso = 'O';
 char chaine;
-char *laby = "files/lv1.txt";
-int niv = 0;
+char *laby;
+int niv;
 int is_reload = 0;
+int new_party = 0;
 int start, stop;
 int total_time;
 char pseudo[4];
