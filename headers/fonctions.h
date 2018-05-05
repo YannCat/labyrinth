@@ -71,8 +71,5 @@ void creation_items();
 void print_in_middle();
 void affich_score();
 
-extern int highlight;
-extern int highlight_lvl;
-extern int highlight_game;
 
 #endif

@@ -372,7 +372,32 @@ void tab_score(int score)
 
 void affich_score()
 {
-	clear();
+	int i = 0;
+	char nom[20][50] = {"\0"};
+	char level[20][10] = {"\0"};
+	char point[20][4] = {"\0"};
+	char temps[20][5] = {"\0"};
+	
+	int t11[20], t21[20], t31[20], t41[20];
+	
+	char *tab_score = "files/score.txt";
+	FILE *fichier;
+	fichier = fopen(tab_score,"r");
+	
+	while (!feof(fichier))  
+	{
+		fscanf(fichier,"%s\t%s\t%s\t%s\n", 	nom[i], level[i], point[i], temps[i]);
+		t11[i] = strlen(nom[i]);
+		t21[i] = strlen(level[i]);
+		t31[i] = strlen(point[i]);
+		t41[i] = strlen(temps[i]);
+		i++;		
+	}
+    fclose(fichier);
+    
+    int ttab = i + 2;
+    
+    clear();
 	endwin();
 	WINDOW *f1, *f2, *f3, *f4;
 	initscr();
@@ -384,10 +409,10 @@ void affich_score()
     init_pair(3,COLOR_BLUE,COLOR_BLACK);
     init_pair(4,COLOR_YELLOW,COLOR_BLACK);
 	
-	f1 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, 0);
-	f2 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, (COLS / 4)); 
-	f3 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, 2 * (COLS / 4)); 
-	f4 = subwin(stdscr, 8 , COLS/4, (LINES / 2) - 3, 3 * (COLS / 4)); 
+	f1 = subwin(stdscr, ttab + 1 , COLS/4 - 1, (LINES / 2) - 3, 0);
+	f2 = subwin(stdscr, ttab + 1 , COLS/4 - 1, (LINES / 2) - 3, (COLS / 4)); 
+	f3 = subwin(stdscr, ttab + 1 , COLS/4 - 1, (LINES / 2) - 3, 2 * (COLS / 4)); 
+	f4 = subwin(stdscr, ttab + 1 , COLS/4 - 1, (LINES / 2) - 3, 3 * (COLS / 4)); 
 	
 	box(f1, ACS_VLINE, ACS_HLINE);
     box(f2, ACS_VLINE, ACS_HLINE);
@@ -418,37 +443,24 @@ void affich_score()
     wattroff (f2, COLOR_PAIR(2));
     wattroff (f3, COLOR_PAIR(3));
     wattroff (f4, COLOR_PAIR(4));
-        
-    wrefresh(f1);
+    
+    for(i = 0; i < ttab; i++)
+    {
+		mvwprintw(f1, i + 2, ((COLS / 4) / 2) - (t11[i] / 2), nom[i]);
+		mvwprintw(f2, i + 2, ((COLS / 4) / 2) - (t21[i] / 2), level[i]);
+		mvwprintw(f3, i + 2, ((COLS / 4) / 2) - (t31[i] / 2), point[i]);
+		mvwprintw(f4, i + 2, ((COLS / 4) / 2) - (t41[i] / 2), temps[i]);
+	}
+	
+	wrefresh(f1);
     wrefresh(f2);
     wrefresh(f3);
     wrefresh(f4);
     
-	int i = 0;
-	char nom[50] = {"\0"};
-	char level[10] = {"\0"};
-	char point[4] = {"\0"};
-	char temps[5] = {"\0"};
-	
-	char *tab_score = "files/score.txt";
-	FILE *fichier;
-	fichier = fopen(tab_score,"r");
-	
-	while (!feof(fichier))  
-	{
-		fscanf(fichier,"%s\t%s\t%s\t%s\n", 	nom, level, point, temps);
-		int t11 = strlen(nom);
-		int t21 = strlen(level);
-		int t31 = strlen(point);
-		int t41 = strlen(temps);
-		
-		mvwprintw(f1, 2 + i, ((COLS / 4) / 2) - (t11 / 2), nom);
-		mvwprintw(f2, 2 + i, ((COLS / 4) / 2) - (t21 / 2), level);
-		mvwprintw(f3, 2 + i, ((COLS / 4) / 2) - (t31 / 2), point);
-		mvwprintw(f4, 2 + i, ((COLS / 4) / 2) - (t41 / 2), temps);
-		i++;		
-	}
-    fclose(fichier);   
+    getch();
+    endwin();
+    clear();
+    menu_princ();
 }
 
 void save()
@@ -487,6 +499,7 @@ void choix_pseudo()
 {
 	clear();
 	refresh();
+	echo();
 	char *choix = "Entrez votre pseudo (4 caractère max):";
 	char *quit = "Appuyez sur F2 pour afficher le menu";
 	int taille = strlen(choix);
@@ -496,9 +509,10 @@ void choix_pseudo()
 	attroff(A_BOLD);
 	mvprintw(LINES - 1,(COLS / 2) - (taille2 / 2), quit);
 	//getstr(pseudo);
-	mvscanw(LINES/2 + 1, (COLS / 2) + taille, "%s", &pseudo);
+	mvscanw(LINES/2 + 1, (COLS / 2) - 2, "%s", &pseudo);
 	refresh();
 	new_party = 0;
+	noecho();
 }
 	
 void prog_princ()

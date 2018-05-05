@@ -4,19 +4,16 @@
 #include <string.h>
 #include "fonctions.h"
 
-int highlight = 0;
-int highlight_lvl = 0;
-int highlight_game = 0;
 
 /**************************************************************************Fonction commune******************************************************************************************************************/
 
-void suppr_menu(MENU *my_menu, ITEM **my_items, int n_choices)
+void suppr_menu(MENU *menu, ITEM **items, int choices)
 {
 	int i;
-	unpost_menu(my_menu);
-	free_menu(my_menu);
-	for(i = 0; i < n_choices; i++)
-			free_item(my_items[i]);
+	unpost_menu(menu);
+	free_menu(menu);
+	for(i = 0; i < choices; i++)
+			free_item(items[i]);
 	endwin();
 }
 
@@ -72,11 +69,11 @@ void menu_princ()
                         "          Nouvelle partie             ",
                         "             Reprendre                ",
                         "            Choisir map               ",
-                        "           Configuration              ",
                         "               Score                  ",
                         "              Quitter                 ",
                         (char *)NULL,
-                  };				
+                  };
+				
 	MENU *my_menu;
     WINDOW *my_menu_win;
     int n_choices = ARRAY_SIZE(choices);
@@ -86,28 +83,27 @@ void menu_princ()
 	initcurses();													// Initialize curses
     creation_items(n_choices, choices, my_items);					// Creation des choix du menu
     my_menu = new_menu(my_items);									// Creation du menu 
-	my_menu_win = newwin(10, 40, LINES/2 - 5, COLS/2 - 19);
+	my_menu_win = newwin(9, 40, LINES/2 - 5, COLS/2 - 19);
 	keypad(my_menu_win, TRUE);
 	set_menu_win(my_menu, my_menu_win);
-	set_menu_sub(my_menu, derwin(my_menu_win, 6, 38, 3, 1));
+	set_menu_sub(my_menu, derwin(my_menu_win, 5, 38, 3, 1));
 	titre_menu(my_menu_win, titre);									// Affichage du titre du menu
 	post_menu(my_menu);
 	wrefresh(my_menu_win);
 	dep_menu(my_menu, my_menu_win, my_items, n_choices);									// Deplacement dans le menu
-	suppr_menu(my_menu, my_items, n_choices);
-	endwin();
 }
 
 void dep_menu(MENU *my_menu, WINDOW *win, ITEM **my_items, int n_choices)
 {
+	int highlight = 0;
 	int c;
-	while(1)						// avant : while(c != KEY_F(2))
+	while(c != ENTER)						// avant : while(c != KEY_F(2))
 	{
 			c = getch(); 
 		    switch(c)
 	        {	
 			case KEY_DOWN:
-				if (highlight < 5)
+				if (highlight < 4)
 				{
 					highlight ++;
 					menu_driver(my_menu, REQ_DOWN_ITEM);
@@ -124,7 +120,7 @@ void dep_menu(MENU *my_menu, WINDOW *win, ITEM **my_items, int n_choices)
 			break;
 			
 			case ENTER: /* Enter */
-				choix_menu(my_menu, my_items, n_choices);
+				choix_menu(my_menu, my_items, n_choices, highlight);
 			break;
 			}
                 wrefresh(win);
@@ -132,12 +128,13 @@ void dep_menu(MENU *my_menu, WINDOW *win, ITEM **my_items, int n_choices)
 
 }
 
-void choix_menu(MENU *my_menu, ITEM **my_items, int n_choices)
+void choix_menu(MENU *my_menu, ITEM **my_items, int n_choices, int highlight)
 {
 	switch (highlight) 
 	{	
 	case 0 :			//Lancer le jeu
 		suppr_menu(my_menu, my_items, n_choices);
+		highlight = 0;
 		clear();
 		refresh();
 		new_party = 1;
@@ -145,6 +142,7 @@ void choix_menu(MENU *my_menu, ITEM **my_items, int n_choices)
 	break;
 	case 1 :			//Reprendre
 		suppr_menu(my_menu, my_items, n_choices);
+		highlight = 0;
 		clear();
 		refresh();
 		reprendre();
@@ -152,25 +150,21 @@ void choix_menu(MENU *my_menu, ITEM **my_items, int n_choices)
 	break;	
 	case 2 :			//Choisir map
 		suppr_menu(my_menu, my_items, n_choices);
+		highlight = 0;
 		clear();
 		refresh();
 		menu_lvl();
 	break;	
-	case 3 :			//Configuration
+	case 3 :			//Score
 		suppr_menu(my_menu, my_items, n_choices);
-		clear();
-		refresh();
-		endwin();
-		exit(0);
-	break;	
-	case 4 :			//Score
-		suppr_menu(my_menu, my_items, n_choices);
+		highlight = 0;
 		clear();
 		refresh();
 		affich_score();
 	break;
-	case 5 :			//Quitter
+	case 4 :			//Quitter
 		suppr_menu(my_menu, my_items, n_choices);
+		highlight = 0;
 		clear();
 		refresh();
 		endwin();
@@ -188,7 +182,7 @@ void menu_lvl()
                         "               Level 2                 ", 
                         "               Level 3                 ",
                         "               Level 4                 ",
-                        "               Quitter                 ",
+                        "               Retour                  ",
                         (char *)NULL,
                   };				
 	MENU *my_menu_lvl;
@@ -211,56 +205,11 @@ void menu_lvl()
 	suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
 }
 
-void choix_menu_lvl(MENU *my_menu_lvl, ITEM **my_items_lvl, int lvl_choices)
-{
-	switch (highlight_lvl) 
-	{	
-	case 0 :			//Map 1
-		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
-		clear();
-		refresh();
-		niv = 0;
-		new_party = 1;
-		prog_princ();
-	break;
-	case 1 :			//Map 2
-		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
-		clear();
-		refresh();
-		niv = 1;
-		new_party = 1;
-		prog_princ();
-	break;	
-	case 2 :			//Map 3
-		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
-		clear();
-		refresh();
-		niv = 2;
-		new_party = 1;
-		prog_princ();
-	break;	
-	case 3 :			//Map 4
-		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
-		clear();
-		refresh();
-		niv = 3;
-		new_party = 1;
-		prog_princ();
-	break;	
-	case 4 :			//Quitter
-		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
-		clear();
-		refresh();
-		endwin();
-		exit(0);
-	break;			
-	}
-}
-
 void dep_menu_lvl(MENU *my_menu_lvl, WINDOW *win, ITEM **my_items_lvl, int lvl_choices)
 {
+	int highlight_lvl = 0;
 	int c;
-	while(1)						// avant : while(c != KEY_F(2))
+	while(c != ENTER)						// avant : while(c != KEY_F(2))
 	{
 		c = getch(); 
 		switch(c)
@@ -277,20 +226,71 @@ void dep_menu_lvl(MENU *my_menu_lvl, WINDOW *win, ITEM **my_items_lvl, int lvl_c
 			break;
 			
 			case ENTER: /* Enter */
-				choix_menu_lvl(my_menu_lvl, my_items_lvl, lvl_choices);
+				choix_menu_lvl(my_menu_lvl, my_items_lvl, lvl_choices, highlight_lvl);
 			break;
 			}
 		wrefresh(win);
 	}	
 }
 
+void choix_menu_lvl(MENU *my_menu_lvl, ITEM **my_items_lvl, int lvl_choices, int highlight_lvl)
+{
+	switch (highlight_lvl) 
+	{	
+	case 0 :			//Map 1
+		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
+		highlight_lvl = 0;
+		clear();
+		refresh();
+		niv = 0;
+		new_party = 1;
+		prog_princ();
+	break;
+	case 1 :			//Map 2
+		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
+		highlight_lvl = 0;
+		clear();
+		refresh();
+		niv = 1;
+		new_party = 1;
+		prog_princ();
+	break;	
+	case 2 :			//Map 3
+		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
+		highlight_lvl = 0;
+		clear();
+		refresh();
+		niv = 2;
+		new_party = 1;
+		prog_princ();
+	break;	
+	case 3 :			//Map 4
+		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
+		highlight_lvl = 0;
+		clear();
+		refresh();
+		niv = 3;
+		new_party = 1;
+		prog_princ();
+	break;	
+	case 4 :			//retour
+		suppr_menu(my_menu_lvl, my_items_lvl, lvl_choices);
+		highlight_lvl = 0;
+		clear();
+		refresh();
+		menu_princ();
+	break;			
+	}
+}
+
+
 /************************************************************************Menu en Jeu*************************************************************************************************************************/
 
 void menu_game()
 {	
 	char *choicesgame[] = {
-                        "              Reprendre                ",
-                        "               Quitter                 ",
+                        "             Reprendre               ",
+                        "              Quitter                ",
                         (char *)NULL,
                   };				
 	MENU *my_menu_game;
@@ -313,31 +313,11 @@ void menu_game()
 	suppr_menu(my_menu_game, my_items_game, game_choices);
 }
 
-void choix_menu_game(MENU *my_menu_game, ITEM **my_items_game, int game_choices)
-{
-	switch (highlight_game) 
-	{	
-	case 0 :			// Reprendre
-		suppr_menu(my_menu_game, my_items_game, game_choices);
-		clear();
-		refresh();
-		reprendre();
-		prog_princ();
-	break;
-	case 1 :			// Quitter
-		suppr_menu(my_menu_game, my_items_game, game_choices);
-		clear();
-		refresh();
-		endwin();
-		exit(0);
-	break;			
-	}
-}
-
 void dep_menu_game(MENU *my_menu_game, WINDOW *win, ITEM **my_items_game, int game_choices)
 {
+	int highlight_game = 0;
 	int c;
-	while(1)						// avant : while(c != KEY_F(2))
+	while(c != ENTER)						// avant : while(c != KEY_F(2))
 	{
 		c = getch(); 
 		switch(c)
@@ -354,9 +334,32 @@ void dep_menu_game(MENU *my_menu_game, WINDOW *win, ITEM **my_items_game, int ga
 			break;
 			
 			case ENTER: /* Enter */
-				choix_menu_game(my_menu_game, my_items_game, game_choices);
+				choix_menu_game(my_menu_game, my_items_game, game_choices, highlight_game);
 			break;
 			}
 		wrefresh(win);
 	}	
+}
+
+void choix_menu_game(MENU *my_menu_game, ITEM **my_items_game, int game_choices, int highlight_game)
+{
+	switch (highlight_game) 
+	{	
+	case 0 :			// Reprendre
+		suppr_menu(my_menu_game, my_items_game, game_choices);
+		highlight_game = 0;
+		clear();
+		refresh();
+		reprendre();
+		prog_princ();
+	break;
+	case 1 :			// Quitter
+		suppr_menu(my_menu_game, my_items_game, game_choices);
+		highlight_game = 0;
+		clear();
+		refresh();
+		endwin();
+		exit(0);
+	break;			
+	}
 }
