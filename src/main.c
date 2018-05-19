@@ -1,11 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "fonctions.h"
-#include <menu.h>				// Inclue automatiquement curses.h
-#include <unistd.h>
-#include "fmod.h"
-#include <string.h>
-#include <time.h>
 
 
 
@@ -16,9 +9,10 @@ int key = 0;			  												// touche clavier initialisé a 0
 char tab[ymax][xmax]; 													// créer un tableau de dimension ymax * xmax
 char perso = 'O';
 char chaine;
-char *laby = "files/lv1.txt";
-int niv = 0;
+char *laby;
+int niv;
 int is_reload = 0;
+int new_party = 0;
 int start, stop;
 int total_time;
 char pseudo[4];
@@ -29,9 +23,11 @@ int main ()
 	FMOD_SOUND *sound;
 	FMOD_System_Create(&fmodsys);
 	FMOD_System_Init(fmodsys, 1, FMOD_INIT_NORMAL, NULL);
-	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM, 0, &sound);
+	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM | FMOD_LOOP_NORMAL, 0, &sound);
+	FMOD_Sound_SetLoopCount(sound, -1);
 	FMOD_System_PlaySound(fmodsys, sound, NULL, 0, NULL);
-
+	
+	bienvenue();
 	menu_princ();
 	
 	FMOD_Sound_Release(sound);
