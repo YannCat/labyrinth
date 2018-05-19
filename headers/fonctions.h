@@ -1,36 +1,20 @@
 #ifndef FONCTIONS_H
 #define FONCTIONS_H
 
+#include <menu.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include "fmod.h"
+
+
 #define xmax	41					// pour definir la taille du  labyrinthe
 #define ymax	21
 #define nb_map	4
 #define ENTER	10
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
-
-	/**************************************************************Fonction Et Variables Nécessaire au fonctionnement du Labyrinthe********************************************************************/
-
-void initcurses();
-void initColors();
-void initLab();
-void depLab();
-void moveCursor();
-void trace_cursor();
-void mur();
-void chemins();
-void entree();
-void sortie();
-void droite();
-void gauche();
-void bas();
-void haut();
-void fin();
-void affich_fin();
-void choix_lvl();
-void tab_score();
-void choix_pseudo();
-void prog_princ();
-void save();
-
 
 extern int nb_ligne;
 extern int nb_col;
@@ -50,7 +34,38 @@ extern int stop;
 extern int total_time;
 extern char pseudo[4];
 
-	/**************************************************************Fonction Et Variables Nécessaire au fonctionnement du menu********************************************************************/
+					/**************************************************************Fonction du fichier labyrinthe********************************************************************/
+
+void initLab();
+void depLab();
+void moveCursor();
+void trace_cursor();
+void mur();
+void chemins();
+void entree();
+void sortie();
+void droite();
+void gauche();
+void bas();
+void haut();
+void fin();
+void affich_fin();
+
+					/**************************************************************Fonction du fichier fonction********************************************************************/
+
+
+void initcurses();
+void initColors();
+void choix_lvl();
+void tab_score();
+void affich_score();
+void save();
+void reprendre();
+void choix_pseudo();
+void bienvenue();
+void prog_princ();
+
+					/**************************************************************Fonction du fichier menu.c********************************************************************/
 
 void menu_princ();
 void menu_lvl();
@@ -66,10 +81,8 @@ void dep_menu_game();
 
 void titre_menu();
 void suppr_menu();
-void reprendre();
 void creation_items();
 void print_in_middle();
-void affich_score();
 
 
 #endif
