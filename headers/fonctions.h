@@ -25,7 +25,6 @@ extern int key;
 extern int niv;
 extern int is_reload;
 extern int new_party;
-extern char perso;
 extern char chaine;
 extern char tab[ymax][xmax];
 extern char *laby;

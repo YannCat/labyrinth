@@ -7,7 +7,6 @@ int xInit, yInit;     													// variable pour definir le point d'initialis
 int compteur = 0;														// Variable pour le score
 int key = 0;			  												// touche clavier initialisé a 0
 char tab[ymax][xmax]; 													// créer un tableau de dimension ymax * xmax
-char perso = 'O';
 char chaine;
 char *laby;
 int niv;

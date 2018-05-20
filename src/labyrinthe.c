@@ -1,8 +1,12 @@
 #include "fonctions.h"
 
+
+char perso = 'O';
+
+
 void initLab(char *niveau, WINDOW *jeu)
 {
-	
+		perso = 'O';
 	 FILE *fichier;  														// recupere le fichier ou est stocker le labyrinthe
     fichier = fopen(niveau,"r");
    
@@ -258,7 +262,7 @@ void fin()
 			clear();
 			wrefresh(lafin);
 			endwin();
-			exit(0);
+			menu_princ();
 		}
 	}
 }
@@ -270,7 +274,7 @@ void affich_fin(WINDOW *win)
 	char *temps = "Temps : %d s";
 	char *continuer = "Niveau Suivant ?";
 	char *choose = "(o) Oui  /  (F2)  Menu";
-	char *quit = "Appuyez sur F2 pour quitter";
+	char *quit = "Appuyez sur F2 pour retourner au menu";
 	if(niv >= nb_map - 1)
 	{
 		continuer = "Vous avez fini le jeu, bravo !";

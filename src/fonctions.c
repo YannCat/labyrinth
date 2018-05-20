@@ -183,7 +183,7 @@ void save()
         printf("Erreur lors de l'ouverture du fichier\n"); 					// si le fichier est introuvable, affiche une erreur
     else
     {
-		fprintf(fichier,"%d¤%d¤%d¤%d\n",niv, nb_ligne, nb_col, compteur);
+		fprintf(fichier,"%s\t%d\t%d\t%d\t%d\n",pseudo, niv, nb_ligne, nb_col, compteur);
 	}
     fclose(fichier);
 }
@@ -199,7 +199,7 @@ void reprendre()
         printf("Erreur lors de l'ouverture du fichier\n"); 					// si le fichier est introuvable, affiche une erreur
     else
     {
-		fscanf(fichier,"%d¤%d¤%d¤%d\n",&niv, &xInit, &yInit, &compteur);
+		fscanf(fichier,"%s\t%d\t%d\t%d\t%d\n",pseudo, &niv, &xInit, &yInit, &compteur);
 	}
     fclose(fichier);
 }
