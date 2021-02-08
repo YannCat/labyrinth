@@ -25,7 +25,7 @@ int main ()
 	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM | FMOD_LOOP_NORMAL, 0, &sound);
 	FMOD_Sound_SetLoopCount(sound, -1);
 	FMOD_System_PlaySound(fmodsys, sound, NULL, 0, NULL);
-	
+
 	bienvenue();
 	menu_princ();
 	

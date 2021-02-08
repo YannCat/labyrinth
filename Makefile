@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall
-LDFLAGS=-lfmod -L lib-ext/fmodstudioapi11004linux/api/lowlevel/lib/x86_64/ -lncurses -lmenu
+LDFLAGS= -I /usr/local/include/fmod -L /usr/local/lib/fmod -lfmod -lncurses -lmenu
 TARGET_NAME=Mazety
 SRC=src/main.c src/fonctions.c src/menu.c src/labyrinthe.c
 DEPS=-I headers/
@@ -14,5 +14,5 @@ clean:
 	rm $(TARGET_NAME)
 
 run:	all
-	LD_LIBRARY_PATH=lib-ext/fmodstudioapi11004linux/api/lowlevel/lib/x86_64/ ./$(TARGET_NAME)
+	LD_LIBRARY_PATH=/usr/local/lib/fmod ./$(TARGET_NAME)
 
