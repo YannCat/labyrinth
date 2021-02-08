@@ -22,7 +22,7 @@ int main ()
 	FMOD_SOUND *sound;
 	FMOD_System_Create(&fmodsys);
 	FMOD_System_Init(fmodsys, 1, FMOD_INIT_NORMAL, NULL);
-	FMOD_System_CreateSound(fmodsys, "music/Mijn.mp3", FMOD_CREATESTREAM | FMOD_LOOP_NORMAL, 0, &sound);
+	FMOD_System_CreateSound(fmodsys, "music/Treize.mp3", FMOD_CREATESTREAM | FMOD_LOOP_NORMAL, 0, &sound);
 	FMOD_Sound_SetLoopCount(sound, -1);
 	FMOD_System_PlaySound(fmodsys, sound, NULL, 0, NULL);
 
