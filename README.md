@@ -10,6 +10,8 @@ Ce code peut être compilé sous linux 18.04.
 ___
 ## Installation
 
+Tout d'abord, installer la librairie ncurses : `sudo apt install libncurses5-dev`.
+
 Avant de compiler le code il faut installer fmod. Pour cela, exécutez le script `install.sh` :
 
 * `chmod +x install.sh`
